@@ -17,7 +17,10 @@
 				"typeProperties": {
 					"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/csv-to-parquet",
 					"baseParameters": {
-						"raw_path": "@pipeline().parameters.raw_path"
+						"raw_path": {
+							"value": "@pipeline().parameters.raw_path",
+							"type": "Expression"
+						}
 					}
 				},
 				"linkedServiceName": {
@@ -47,7 +50,10 @@
 				"typeProperties": {
 					"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/append_update",
 					"baseParameters": {
-						"transform_path": "@pipeline().parameters.transform_path"
+						"transform_path": {
+							"value": "@pipeline().parameters.transform_path",
+							"type": "Expression"
+						}
 					}
 				},
 				"linkedServiceName": {
@@ -58,7 +64,8 @@
 		],
 		"parameters": {
 			"raw_path": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "/mnt/raw_data/mock_data.csv"
 			},
 			"transform_path": {
 				"type": "string",
