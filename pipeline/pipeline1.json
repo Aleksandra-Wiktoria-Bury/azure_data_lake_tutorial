@@ -24,8 +24,23 @@
 					"referenceName": "AzureDatabricks1",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "raw_path",
+					"value": "@pipeline().parameters.raw_path"
+				}
 			}
 		],
+		"variables": {
+			"raw_path": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
