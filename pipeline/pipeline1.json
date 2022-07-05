@@ -53,7 +53,8 @@
 						"transform_path": {
 							"value": "@pipeline().parameters.transform_path",
 							"type": "Expression"
-						}
+						},
+						"raw_path": "@pipeline().parameters.raw_path"
 					}
 				},
 				"linkedServiceName": {
