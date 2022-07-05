@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/csv-to-parquet",
 					"baseParameters": {
-						"raw_path": "@pipeline().parameteres.name"
+						"raw_path": "@pipeline().parameteres.raw_path"
 					}
 				},
 				"linkedServiceName": {
@@ -26,6 +26,11 @@
 				}
 			}
 		],
+		"parameters": {
+			"raw_path": {
+				"type": "string"
+			}
+		},
 		"variables": {
 			"raw_path": {
 				"type": "String"
