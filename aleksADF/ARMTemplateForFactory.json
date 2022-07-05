@@ -41,7 +41,43 @@
 						"typeProperties": {
 							"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/csv-to-parquet",
 							"baseParameters": {
-								"raw_path": "@pipeline().parameters.raw_path"
+								"raw_path": {
+									"value": "@pipeline().parameters.raw_path",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks1",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "append update",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "csv to parquet",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/append_update",
+							"baseParameters": {
+								"transform_path": {
+									"value": "@pipeline().parameters.transform_path",
+									"type": "Expression"
+								}
 							}
 						},
 						"linkedServiceName": {
@@ -57,11 +93,10 @@
 				"parameters": {
 					"raw_path": {
 						"type": "string"
-					}
-				},
-				"variables": {
-					"raw_path": {
-						"type": "String"
+					},
+					"transform_path": {
+						"type": "string",
+						"defaultValue": "/mnt/transform_data"
 					}
 				},
 				"annotations": []
