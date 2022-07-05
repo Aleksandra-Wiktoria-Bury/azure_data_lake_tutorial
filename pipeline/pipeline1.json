@@ -17,22 +17,12 @@
 				"typeProperties": {
 					"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/csv-to-parquet",
 					"baseParameters": {
-						"raw_path": "@pipeline().parameters.raw_path"
+						"raw_path": "@pipeline().parameteres.name"
 					}
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks1",
 					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "Set variable1",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "raw_path",
-					"value": "@pipeline().parameters.raw_path"
 				}
 			}
 		],
