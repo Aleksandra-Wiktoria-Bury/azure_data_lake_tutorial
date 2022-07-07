@@ -135,14 +135,19 @@
 				}
 			}
 		],
+		"parameters": {
+			"transform_path": {
+				"type": "string"
+			},
+			"raw_path": {
+				"type": "string"
+			}
+		},
 		"variables": {
 			"raw_path": {
 				"type": "String"
 			},
 			"transform_path": {
-				"type": "String"
-			},
-			"serving_path": {
 				"type": "String"
 			}
 		},
