@@ -54,25 +54,43 @@
 							"value": "@pipeline().parameters.transform_path",
 							"type": "Expression"
 						},
-						"raw_path": "@pipeline().parameters.raw_path"
+						"raw_path": {
+							"value": "@pipeline().parameters.raw_path",
+							"type": "Expression"
+						}
 					}
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks1",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT * FROM ADFmetatable",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					}
+				}
 			}
 		],
-		"parameters": {
-			"raw_path": {
-				"type": "string",
-				"defaultValue": "/mnt/raw_data/mock_data.csv"
-			},
-			"transform_path": {
-				"type": "string",
-				"defaultValue": "/mnt/transform_data"
-			}
-		},
 		"annotations": []
 	}
 }
