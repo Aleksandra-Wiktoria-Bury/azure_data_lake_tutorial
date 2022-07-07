@@ -10,6 +10,9 @@
 		},
 		"AzureDatabricks1_accessToken": {
 			"value": ""
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"value": ""
 		}
 	}
 }
