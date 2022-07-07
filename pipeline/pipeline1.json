@@ -7,6 +7,12 @@
 				"type": "DatabricksNotebook",
 				"dependsOn": [
 					{
+						"activity": "raw to transform",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
 						"activity": "Lookup transform",
 						"dependencyConditions": [
 							"Succeeded"
@@ -16,12 +22,6 @@
 						"activity": "Lookup raw",
 						"dependencyConditions": [
 							"Succeeded"
-						]
-					},
-					{
-						"activity": "raw to transform",
-						"dependencyConditions": [
-							"Completed"
 						]
 					}
 				],
@@ -133,13 +133,19 @@
 					"referenceName": "AzureDatabricks1",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": []
 			}
 		],
 		"parameters": {
-			"transform_path": {
+			"raw_path": {
 				"type": "string"
 			},
-			"raw_path": {
+			"transform_path": {
 				"type": "string"
 			}
 		},
