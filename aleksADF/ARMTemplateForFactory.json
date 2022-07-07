@@ -35,21 +35,21 @@
 						"type": "DatabricksNotebook",
 						"dependsOn": [
 							{
-								"activity": "Lookup transform",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "Lookup raw",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
 								"activity": "raw to transform",
 								"dependencyConditions": [
 									"Completed"
+								]
+							},
+							{
+								"activity": "Set variable2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
 								]
 							}
 						],
@@ -65,11 +65,11 @@
 							"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/append_update",
 							"baseParameters": {
 								"transform_path": {
-									"value": "@activity('Lookup transform').outputvariables('transform_path')pipeline().parameters.transform_path",
+									"value": "@variables('transform_path')",
 									"type": "Expression"
 								},
 								"raw_path": {
-									"value": "@activity('Lookup raw').output",
+									"value": "@variables('raw_path')",
 									"type": "Expression"
 								}
 							}
@@ -136,7 +136,7 @@
 						"type": "DatabricksNotebook",
 						"dependsOn": [
 							{
-								"activity": "Lookup raw",
+								"activity": "Set variable1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -154,7 +154,7 @@
 							"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/csv-to-parquet",
 							"baseParameters": {
 								"raw_path": {
-									"value": "@activity('Lookup raw').output",
+									"value": "@variables('raw_path')",
 									"type": "Expression"
 								}
 							}
@@ -163,19 +163,51 @@
 							"referenceName": "AzureDatabricks1",
 							"type": "LinkedServiceReference"
 						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Lookup raw",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "raw_path",
+							"value": {
+								"value": "@activity('Lookup raw').output",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set variable2",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Lookup transform",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "transform_path",
+							"value": {
+								"value": "@activity('Lookup transform').output",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
-				},
-				"parameters": {
-					"transform_path": {
-						"type": "string"
-					},
-					"raw_path": {
-						"type": "string"
-					}
 				},
 				"variables": {
 					"raw_path": {
