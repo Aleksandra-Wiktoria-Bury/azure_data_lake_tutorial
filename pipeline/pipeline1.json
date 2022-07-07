@@ -175,14 +175,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"raw_path": {
-				"type": "string"
-			},
-			"transform_path": {
-				"type": "string"
-			}
-		},
 		"variables": {
 			"raw_path": {
 				"type": "String"
