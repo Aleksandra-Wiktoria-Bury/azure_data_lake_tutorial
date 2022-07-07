@@ -7,7 +7,7 @@
 				"type": "DatabricksNotebook",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "Lookup raw",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -38,7 +38,20 @@
 			{
 				"name": "append update",
 				"type": "DatabricksNotebook",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Lookup transform",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Lookup raw",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -51,11 +64,11 @@
 					"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/append_update",
 					"baseParameters": {
 						"transform_path": {
-							"value": "@pipeline().parameters.transform_path",
+							"value": "@activity('Lookup transform').outputvariables('transform_path')pipeline().parameters.transform_path",
 							"type": "Expression"
 						},
 						"raw_path": {
-							"value": "@pipeline().parameters.raw_path",
+							"value": "@activity('Lookup raw').output",
 							"type": "Expression"
 						}
 					}
@@ -66,7 +79,7 @@
 				}
 			},
 			{
-				"name": "Lookup1",
+				"name": "Lookup raw",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -91,22 +104,27 @@
 				}
 			},
 			{
-				"name": "Set variable1",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Lookup1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"name": "Lookup transform",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "raw_path",
-					"value": {
-						"value": "@activity('Lookup1').output",
-						"type": "Expression"
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT transform_path FROM ADFmetatable where id = 1",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
 					}
 				}
 			}
