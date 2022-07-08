@@ -5,26 +5,7 @@
 			{
 				"name": "append update",
 				"type": "DatabricksNotebook",
-				"dependsOn": [
-					{
-						"activity": "raw to transform",
-						"dependencyConditions": [
-							"Completed"
-						]
-					},
-					{
-						"activity": "Set variable2",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "Set variable1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -104,14 +85,7 @@
 			{
 				"name": "raw to transform",
 				"type": "DatabricksNotebook",
-				"dependsOn": [
-					{
-						"activity": "Set variable1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -150,26 +124,6 @@
 					"variableName": "raw_path",
 					"value": {
 						"value": "@activity('Lookup raw').output",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Set variable2",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Lookup transform",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "transform_path",
-					"value": {
-						"value": "@activity('Lookup transform').output",
 						"type": "Expression"
 					}
 				}
