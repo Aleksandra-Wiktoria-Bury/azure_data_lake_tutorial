@@ -31,28 +31,9 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "append update",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "raw to transform",
-								"dependencyConditions": [
-									"Completed"
-								]
-							},
-							{
-								"activity": "Set variable2",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "Set variable1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"name": "Lookup paths",
+						"type": "Lookup",
+						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -62,146 +43,110 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/append_update",
-							"baseParameters": {
-								"transform_path": {
-									"value": "@variables('transform_path')",
-									"type": "Expression"
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT * FROM [dbo].[ADFmetatable]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup paths",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup paths').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "append update",
+									"type": "DatabricksNotebook",
+									"dependsOn": [
+										{
+											"activity": "csv to parquet",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/csv-to-parquet",
+										"baseParameters": {
+											"raw_path": {
+												"value": "@item().raw_path",
+												"type": "Expression"
+											},
+											"transform_path": {
+												"value": "@item().transform_path",
+												"type": "Expression"
+											},
+											"serving_path": {
+												"value": "@item().serving_path",
+												"type": "Expression"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureDatabricks1",
+										"type": "LinkedServiceReference"
+									}
 								},
-								"raw_path": {
-									"value": "@variables('raw_path')",
-									"type": "Expression"
+								{
+									"name": "csv to parquet",
+									"type": "DatabricksNotebook",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/csv-to-parquet",
+										"baseParameters": {
+											"raw_path": {
+												"value": "@item().raw_path",
+												"type": "Expression"
+											},
+											"transform_path": {
+												"value": "@item().transform_path",
+												"type": "Expression"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureDatabricks1",
+										"type": "LinkedServiceReference"
+									}
 								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Lookup raw",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT raw_path FROM ADFmetatable where id = 1",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSqlTable1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					},
-					{
-						"name": "Lookup transform",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT transform_path FROM ADFmetatable where id = 1",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSqlTable1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					},
-					{
-						"name": "raw to transform",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "Set variable1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/csv-to-parquet",
-							"baseParameters": {
-								"raw_path": {
-									"value": "@variables('raw_path')",
-									"type": "Expression"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Set variable1",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Lookup raw",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "raw_path",
-							"value": {
-								"value": "@activity('Lookup raw').output",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "Set variable2",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Lookup transform",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "transform_path",
-							"value": {
-								"value": "@activity('Lookup transform').output",
-								"type": "Expression"
-							}
+							]
 						}
 					}
 				],
@@ -209,19 +154,11 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"variables": {
-					"raw_path": {
-						"type": "String"
-					},
-					"transform_path": {
-						"type": "String"
-					}
-				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]"
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]"
 			]
 		},
 		{
