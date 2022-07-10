@@ -32,7 +32,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "ADFmetatable"
+			"table": "ADFmetadata"
 		}
 	}
 }

@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT * FROM [dbo].[ADFmetatable]",
+						"sqlReaderQuery": "SELECT * FROM [dbo].[ADFmetadata]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -79,7 +79,8 @@
 									"serving_path": {
 										"value": "@item().serving_path",
 										"type": "Expression"
-									}
+									},
+									"primary_key": "@item().primary_key"
 								}
 							},
 							"linkedServiceName": {
