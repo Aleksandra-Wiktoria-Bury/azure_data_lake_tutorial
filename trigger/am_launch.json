@@ -1,0 +1,25 @@
+{
+	"name": "am_launch",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pipeline1",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2022-07-26T10:00:00",
+				"endTime": "2022-07-28T12:00:00",
+				"timeZone": "W. Europe Standard Time"
+			}
+		}
+	}
+}
