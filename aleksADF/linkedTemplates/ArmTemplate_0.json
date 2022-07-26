@@ -18,6 +18,10 @@
 		"AzureSqlDatabase1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0615-145604-qswxzm65"
 		}
 	},
 	"variables": {
@@ -50,7 +54,7 @@
 						"type": "SecureString",
 						"value": "[parameters('AzureDatabricks1_accessToken')]"
 					},
-					"existingClusterId": "0615-145604-qswxzm65"
+					"existingClusterId": "[parameters('AzureDatabricks1_properties_typeProperties_existingClusterId')]"
 				}
 			},
 			"dependsOn": []
@@ -104,7 +108,7 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "ADFmetatable"
+					"table": "ADFmetadata"
 				}
 			},
 			"dependsOn": [
@@ -132,7 +136,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT * FROM [dbo].[ADFmetatable]",
+								"sqlReaderQuery": "SELECT * FROM [dbo].[ADFmetadata]",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -195,7 +199,12 @@
 											"serving_path": {
 												"value": "@item().serving_path",
 												"type": "Expression"
-											}
+											},
+											"primary_key": {
+												"value": "@item().primary_key",
+												"type": "Expression"
+											},
+											"file_name": "@item().file_name"
 										}
 									},
 									"linkedServiceName": {
@@ -206,7 +215,14 @@
 								{
 									"name": "csv to parquet",
 									"type": "DatabricksNotebook",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "fetch records",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "7.00:00:00",
 										"retry": 0,
@@ -225,7 +241,34 @@
 											"transform_path": {
 												"value": "@item().transform_path",
 												"type": "Expression"
-											}
+											},
+											"file_name": "@item().file_name",
+											"primary_key": "@item().primary_key"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureDatabricks1",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "fetch records",
+									"type": "DatabricksNotebook",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/fetch_stock_data",
+										"baseParameters": {
+											"symbol": "@item().symbol",
+											"file_name": "@item().file_name",
+											"raw_path": "@item().raw_path"
 										}
 									},
 									"linkedServiceName": {
@@ -246,6 +289,38 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/am_launch')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pipeline1",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-07-26T10:00:00",
+						"endTime": "2022-07-28T12:00:00",
+						"timeZone": "W. Europe Standard Time",
+						"schedule": {}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pipeline1')]"
 			]
 		}
 	]

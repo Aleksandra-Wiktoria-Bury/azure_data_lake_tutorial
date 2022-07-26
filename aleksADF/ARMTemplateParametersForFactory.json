@@ -13,6 +13,9 @@
 		},
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"value": "0615-145604-qswxzm65"
 		}
 	}
 }
