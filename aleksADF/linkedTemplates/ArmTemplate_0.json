@@ -186,7 +186,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/csv-to-parquet",
+										"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/append_update",
 										"baseParameters": {
 											"raw_path": {
 												"value": "@item().raw_path",
@@ -204,7 +204,10 @@
 												"value": "@item().primary_key",
 												"type": "Expression"
 											},
-											"file_name": "@item().file_name"
+											"file_name": {
+												"value": "@item().file_name",
+												"type": "Expression"
+											}
 										}
 									},
 									"linkedServiceName": {
@@ -242,8 +245,14 @@
 												"value": "@item().transform_path",
 												"type": "Expression"
 											},
-											"file_name": "@item().file_name",
-											"primary_key": "@item().primary_key"
+											"file_name": {
+												"value": "@item().file_name",
+												"type": "Expression"
+											},
+											"primary_key": {
+												"value": "@item().primary_key",
+												"type": "Expression"
+											}
 										}
 									},
 									"linkedServiceName": {
@@ -266,9 +275,18 @@
 									"typeProperties": {
 										"notebookPath": "/Repos/abury@thinkport.digital/azure_data_lake_tutorial/fetch_stock_data",
 										"baseParameters": {
-											"symbol": "@item().symbol",
-											"file_name": "@item().file_name",
-											"raw_path": "@item().raw_path"
+											"symbol": {
+												"value": "@item().symbol",
+												"type": "Expression"
+											},
+											"file_name": {
+												"value": "@item().file_name",
+												"type": "Expression"
+											},
+											"raw_path": {
+												"value": "@item().raw_path",
+												"type": "Expression"
+											}
 										}
 									},
 									"linkedServiceName": {
